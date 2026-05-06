@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Итоговая работа Бердниковой Анны | Курс НаДиП</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* --- НОВЫЕ ЦВЕТОВЫЕ СХЕМЫ --- */
+        :root {
+            --shadow-color: rgba(0, 0, 0, 0.2);
+        }
+
+        /* Светлая тема: молочный + нежно-мятный */
+        [data-theme="light"] {
+            --bg-color: #E6D7BA;
+            --text-color: #3C2821;
+            --card-bg: rgba(255, 252, 245, 0.92);
+            --border-color: #8FA88F;
+            --shadow: rgba(60, 40, 33, 0.15);
+            --btn-bg: #B2CAB2;
+            --btn-hover-bg: #9CBC9C;
+            --btn-text: #3C2821;
+            --secondary-text: #5C4A3E;
+            --badge-bg: #F5EDDC;
+            --accent-glow: rgba(178, 202, 178, 0.3);
+            --modal-overlay: rgba(60, 40, 33, 0.75);
+            --bg-overlay: rgba(230, 215, 186, 0.85);
+            --bg-image-url: url('https://ih1.redbubble.net/image.1807591863.8447/st,small,507x507-pad,600x600,f8f8f8.jpg');
+        }
+
+        /* Темная тема: темно-шоколадный + мятный */
+        [data-theme="dark"] {
+            --bg-color: #3C2821;
+            --text-color: #E6D7BA;
+            --card-bg: rgba(50, 34, 28, 0.94);
+            --border-color: #B2CAB2;
+            --shadow: rgba(0, 0, 0, 0.5);
+            --btn-bg: #B2CAB2;
+            --btn-hover-bg: #9CBC9C;
+            --btn-text: #3C2821;
+            --secondary-text: #C4B49A;
+            --badge-bg: #4A3228;
+            --accent-glow: rgba(178, 202, 178, 0.2);
+            --modal-overlay: rgba(30, 20, 15, 0.9);
+            --bg-overlay: rgba(60, 40, 33, 0.8);
+            --bg-image-url: url('https://avatars.mds.yandex.net/i?id=36d656363d45d516a3566811d213ead8_l-3592543-images-thumbs&n=13');
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Poppins', 'Impact', 'Arial Black', system-ui, sans-serif;
+            color: var(--text-color);
+            min-height: 100vh;
+            line-height: 1.5;
+            padding: 20px;
+            position: relative;
+            background: var(--bg-color);
+        }
+        
+        /* Псевдоэлемент для фонового изображения с прозрачностью */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: var(--bg-image-url);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* Контент поверх фона */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 10px 0 30px;
+        }
+
+        /* Кнопка переключения темы */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            cursor: pointer;
+            font-size: 1.9rem;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 0 var(--shadow-color);
+            transition: all 0.08s linear;
+            font-family: monospace;
+            backdrop-filter: blur(2px);
+        }
+
+        .theme-toggle:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 var(--shadow-color);
+        }
+
+        /* МОДАЛЬНОЕ ОКНО */
+        .decision-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--modal-overlay);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            max-width: 450px;
+            width: 90%;
+            background: var(--card-bg);
+            border: 4px solid var(--border-color);
+            border-radius: 48px;
+            padding: 32px 28px 40px;
+            box-shadow: 16px 16px 0 var(--shadow-color);
+            text-align: center;
+            animation: modalPop 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+            position: relative;
+            z-index: 2001;
+        }
+
+        @keyframes modalPop {
+            0% {
+                opacity: 0;
+                transform: scale(0.92) translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-question {
+            font-size: 2rem;
+            font-weight: 900;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            text-transform: uppercase;
+            color: var(--text-color);
+            margin-bottom: 24px;
+            letter-spacing: 1px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .modal-btn {
+            padding: 14px 32px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: 3px solid var(--border-color);
+            border-radius: 60px;
+            cursor: pointer;
+            font-family: monospace;
+            text-transform: uppercase;
+            transition: 0.08s linear;
+            box-shadow: 4px 4px 0 var(--shadow-color);
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            min-width: 120px;
+        }
+
+        .modal-btn:hover {
+            background: var(--btn-hover-bg);
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--shadow-color);
+        }
+
+        .modal-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--shadow-color);
+        }
+
+        /* ОСНОВНОЙ КОНТЕНТ */
+        #mainContent {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        #mainContent.visible {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Стиль рамок */
+        .frame-block {
+            border: 3px solid var(--border-color);
+            border-radius: 28px;
+            background: var(--card-bg);
+            box-shadow: 8px 8px 0 var(--shadow-color);
+            padding: 28px 32px;
+            margin-bottom: 36px;
+            backdrop-filter: blur(3px);
+            transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1), box-shadow 0.2s;
+        }
+        
+        .frame-block:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 12px 12px 0 var(--shadow-color);
+        }
+
+        .main-header {
+            text-align: center;
+            border: 4px solid var(--border-color);
+            border-radius: 60px;
+            background: var(--card-bg);
+            padding: 40px 20px 35px;
+            margin-bottom: 32px;
+            box-shadow: 10px 10px 0 var(--shadow-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-header h1 {
+            font-size: 2.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 900;
+            color: var(--text-color);
+            word-break: break-word;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            margin-bottom: 15px;
+        }
+
+        .header-sub {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--secondary-text);
+            background: var(--badge-bg);
+            display: inline-block;
+            padding: 8px 28px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+            border-left: 3px solid var(--border-color);
+            border-right: 3px solid var(--border-color);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--secondary-text);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .apps-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 10px;
+        }
+
+        .app-link {
+            display: inline-block;
+            background: var(--badge-bg);
+            border: 2px solid var(--border-color);
+            padding: 8px 24px;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            color: var(--text-color);
+            text-decoration: none;
+            font-family: monospace;
+            box-shadow: 2px 2px 0 var(--shadow-color);
+        }
+
+        .app-link:hover {
+            transform: translate(-2px, -2px);
+            background: var(--border-color);
+            color: var(--bg-color);
+            box-shadow: 4px 4px 0 var(--shadow-color);
+        }
+
+        .projects-frame h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            letter-spacing: 2px;
+            font-family: 'Impact', sans-serif;
+            text-transform: uppercase;
+        }
+
+        /* Сетка для проектов */
+        .projects-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .project-link {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: 0.08s linear;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 4px 4px 0 var(--shadow-color);
+            border: 2px solid var(--border-color);
+            font-family: monospace;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .project-link:hover {
+            background: var(--btn-hover-bg);
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--shadow-color);
+        }
+
+        /* Адаптив */
+        @media (max-width: 680px) {
+            .project-link {
+                white-space: normal;
+                word-break: keep-all;
+                padding: 8px 18px;
+                font-size: 0.85rem;
+            }
+            .main-header h1 { font-size: 2rem; }
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .social-btn {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            padding: 12px 32px;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: 0.08s linear;
+            box-shadow: 4px 4px 0 var(--shadow-color);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid var(--border-color);
+        }
+        .social-btn:hover {
+            background: var(--btn-hover-bg);
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--shadow-color);
+        }
+
+        .small-note {
+            text-align: center;
+            font-size: 0.8rem;
+            margin-top: 28px;
+            opacity: 0.8;
+            font-family: monospace;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 20px;
+            color: var(--secondary-text);
+        }
+
+        .projects-subtitle {
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--secondary-text);
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+
+        @media (max-width: 720px) {
+            .main-header h1 { font-size: 1.8rem; }
+            .header-sub { font-size: 0.9rem; }
+            .frame-block { padding: 20px 16px; }
+            .theme-toggle { width: 48px; height: 48px; font-size: 1.5rem; top: 12px; right: 12px; }
+            .modal-question { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- МОДАЛЬНОЕ ОКНО "ВАМ ИНТЕРЕСНО?" -->
+    <div id="decisionModal" class="decision-modal">
+        <div class="modal-content">
+            <div class="modal-question">вам интересно?</div>
+            <div class="modal-buttons">
+                <button id="btnYes" class="modal-btn">даа</button>
+                <button id="btnNo" class="modal-btn">нет.</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ВТОРОЕ МОДАЛЬНОЕ ОКНО "ЛАДНО, ЗАХОДИ" -->
+    <div id="secondModal" class="decision-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-question">ладно, заходи!</div>
+            <div class="modal-buttons">
+                <button id="btnOkay" class="modal-btn">хорошо</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <div id="mainContent">
+        <button class="theme-toggle" id="themeToggleBtn" aria-label="Переключить тему">🌙</button>
+        <div class="container">
+            <div class="main-header">
+                <h1>ИТОГОВАЯ РАБОТА<br>БЕРДНИКОВОЙ АННЫ<br>ПОСЛЕ ИЗУЧЕНИЯ КУРСА НАДиП</h1>
+            </div>
+
+            <!-- Проекты -->
+            <div class="frame-block projects-frame">
+                <p class="projects-subtitle">Проекты - мой главный опыт</p>
+                <h2>МОИ ПРОЕКТЫ</h2>
+                <div class="projects-container">
+                    <a href="https://nrostomentos.github.io/workgoo/" class="project-link" target="_blank" rel="noopener">Квест</a>
+                    <a href="https://nrostomentos.github.io/anpractic/" class="project-link" target="_blank" rel="noopener">Мопсы</a>
+                    <a href="https://nrostomentos.github.io/tfff/" class="project-link" target="_blank" rel="noopener">Шрифты</a>
+                    <a href="https://nrostomentos.github.io/emo/" class="project-link" target="_blank" rel="noopener">кнопочка</a>
+                    <a href="https://nrostomentos.github.io/anpracticn/" class="project-link" target="_blank" rel="noopener">Кастомные курсоры</a>
+                    <a href="https://nrostomentos.github.io/startthree/" class="project-link" target="_blank" rel="noopener">Погода (демо)</a>
+                    <a href="https://nrostomentos.github.io/startfour/" class="project-link" target="_blank" rel="noopener">О НАДиП</a>
+                </div>
+            </div>
+
+            <!-- Приложения -->
+            <div class="frame-block apps-section" style="text-align: center;">
+                <p class="section-title">Приложения, в которых я работала больше всего...</p>
+                <div class="apps-grid">
+                    <span class="app-link">UNITY</span>
+                    <span class="app-link">FIGMA</span>
+                    <span class="app-link">ROBLOX STUDIO</span>
+                    <span class="app-link">GITHUB PAGES</span>
+                    <span class="app-link">KRITA</span>
+                    <span class="app-link">POWER POINT</span>
+                    <span class="app-link">ADOBE PHOTOSHOP</span>
+                </div>
+            </div>
+
+            <!-- Контакты и ссылки -->
+            <div class="frame-block" style="text-align: center; padding: 32px 20px;">
+                <div class="footer-links">
+                    <a href="https://github.com/nrostomentos" class="social-btn" target="_blank" rel="noopener">GitHub</a>
+                    <a href="https://t.me/swn_f" class="social-btn" target="_blank" rel="noopener">Telegram</a>
+                </div>
+                <div class="small-note">
+                    итоговая работа | курс НАДиП | Анна Бердникова
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const firstModal = document.getElementById('decisionModal');
+            const secondModal = document.getElementById('secondModal');
+            const mainContent = document.getElementById('mainContent');
+            const btnYes = document.getElementById('btnYes');
+            const btnNo = document.getElementById('btnNo');
+            const btnOkay = document.getElementById('btnOkay');
+
+            // Показать основной сайт
+            function showMainSite() {
+                if (secondModal) {
+                    secondModal.style.opacity = '0';
+                    setTimeout(() => {
+                        secondModal.style.display = 'none';
+                        mainContent.classList.add('visible');
+                        mainContent.style.opacity = '1';
+                    }, 250);
+                } else {
+                    mainContent.classList.add('visible');
+                }
+            }
+
+            // По нажатию "ДА" — показываем второе модальное окно
+            if (btnYes) {
+                btnYes.addEventListener('click', () => {
+                    firstModal.style.opacity = '0';
+                    setTimeout(() => {
+                        firstModal.style.display = 'none';
+                        secondModal.style.display = 'flex';
+                        secondModal.style.opacity = '1';
+                    }, 250);
+                });
+            }
+
+            // По нажатию "НЕТ" — выдаем ошибку и закрываем вкладку
+            if (btnNo) {
+                btnNo.addEventListener('click', () => {
+                    document.body.innerHTML = '';
+                    document.write('<html><head><title>Ошибка</title><style>body{background:#3C2821;color:#E6D7BA;display:flex;align-items:center;justify-content:center;height:100vh;font-family:monospace;font-size:2rem;text-align:center;}</style></head><body>КРИТИЧЕСКАЯ ОШИБКА 💀</body></html>');
+                    setTimeout(() => {
+                        window.close();
+                    }, 1500);
+                });
+            }
+
+            // По нажатию "ХОРОШО" — заходим на сайт
+            if (btnOkay) {
+                btnOkay.addEventListener('click', showMainSite);
+            }
+
+            // Функция смены темы
+            function setTheme(theme) {
+                document.body.setAttribute('data-theme', theme);
+                localStorage.setItem('siteTheme', theme);
+                const toggle = document.getElementById('themeToggleBtn');
+                if (toggle) {
+                    toggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+                }
+            }
+            
+            const savedTheme = localStorage.getItem('siteTheme');
+            if (savedTheme === 'dark' || savedTheme === 'light') {
+                setTheme(savedTheme);
+            } else {
+                setTheme('dark'); // По умолчанию темная тема
+            }
+            
+            const themeToggle = document.getElementById('themeToggleBtn');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    const current = document.body.getAttribute('data-theme');
+                    setTheme(current === 'dark' ? 'light' : 'dark');
+                    themeToggle.style.transform = 'scale(0.95)';
+                    setTimeout(() => { if(themeToggle) themeToggle.style.transform = ''; }, 120);
+                });
+            }
+
+            // Бусти-кнопка (вместо "Контакта") — добавляем внизу
+            const footerLinks = document.querySelector('.footer-links');
+            if (footerLinks) {
+                const boostyLink = document.createElement('a');
+                boostyLink.href = 'https://boosty.to/swanoffic';
+                boostyLink.className = 'social-btn';
+                boostyLink.target = '_blank';
+                boostyLink.rel = 'noopener';
+                boostyLink.textContent = 'Поддержать';
+                boostyLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('поддержать молодого дизайнера-программиста всегда приятно!');
+                    window.open('https://boosty.to/swanoffic', '_blank');
+                });
+                footerLinks.appendChild(boostyLink);
+            }
+        })();
+    </script>
+</body>
+</html>
